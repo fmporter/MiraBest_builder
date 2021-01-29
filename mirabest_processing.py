@@ -78,6 +78,19 @@ def get_fitsfiles(path):
     filelist = glob.glob(path+'*.fits')
     
     return filelist
+
+#---------------------
+
+def normalise_greyscale(image_data, subset=image_data):
+    """Normalise image_data using a given subsection"""
+    
+    # normalise to [0, 1]:
+    image_max, image_min = subset.max(), subset.min()
+    image_data[mask] = (image_data[mask] - image_min)/(image_max - image_min)
+    # remap to [0, 255] for greyscale:
+    image_data*=255.0
+    
+    return image_data
     
 #---------------------
 
@@ -125,11 +138,7 @@ def read_fits_image(fitsfile, extension='_F', cropsize=150, pixel_arcsec = 1.8, 
     subset = image_data[mask]
     image_data[~mask] = 0
     
-    # normalise to [0, 1]:
-    image_max, image_min = subset.max(), subset.min()
-    image_data[mask] = (image_data[mask] - image_min)/(image_max - image_min)
-    # remap to [0, 255] for greyscale:
-    image_data*=255.0
+    image_data = normalise_greyscale(image_data, subset)
     
     # Check if the file has already been saved as the final png
     if path.exists('./MiraBest'+extension+'/PNG/Scaled_Final/'+namestring+'.png') is False:
