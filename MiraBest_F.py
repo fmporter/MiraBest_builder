@@ -1,6 +1,3 @@
-from __future__ import print_function
-from PIL import Image
-import os
 import os.path
 import numpy as np
 import sys
@@ -30,22 +27,22 @@ class MiraBest_F(data.Dataset):
             downloaded again.
     """
 
-    base_folder = 'batches'
+    base_folder = 'F_batches'
     url = "http://www.jb.man.ac.uk/research/MiraBest/MiraBest_F/MiraBest_F_batches.tar.gz" 
     filename = "MiraBest_F_batches.tar.gz"
-    tgz_md5 = '5bd5df2febeffe805da8f1b08309755e'
+    tgz_md5 = '7d4e3a623d29db7204bce81676ee8ce2'
     train_list = [
-                  ['data_batch_1', 'e7087c86019d2fd3445badbc518f075a'],
-                  ['data_batch_2', 'd9768b52716b493a791f3289ce4cea9c'],
-                  ['data_batch_3', '67317c3b3f129a535f5ddc5de7d5b61b'],
-                  ['data_batch_4', '944d63d98efbfd12b636efaacd6e9cb3'],
-                  ['data_batch_5', 'd5f040cc647cd4bb9f7e40bd0cd0b5ed'],
-                  ['data_batch_6', '3ff66daad1d008422f8c87741ce1b810'],
-                  ['data_batch_7', '5507daa649fac78a9648b72cfe639e7f'],
+                  ['data_batch_1', 'f7a470b7367e8e0d0c5093d2cf266d54'],
+                  ['data_batch_2', 'bb65ecd7e748e9fb789419b1efbf1bab'],
+                  ['data_batch_3', '32de1078e7cd47f5338c666a1b563ede'],
+                  ['data_batch_4', 'a1209aceedd8806c88eab27ce45ee2c4'],
+                  ['data_batch_5', '1619cd7c54f5d71fcf4cfefea829728e'],
+                  ['data_batch_6', '636c2b84649286e19bcb0684fc9fbb01'],
+                  ['data_batch_7', 'bc67bc37080dc4df880ffe9720d680a8'],
                   ]
 
     test_list = [
-                 ['test_batch', '7f7f4a05ddb8514ee940f5b93a265c57'],
+                 ['test_batch', 'ac7ea0d5ee8c7ab49f257c9964796953'],
                  ]
     meta = {
                 'filename': 'batches.meta',
