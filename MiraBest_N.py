@@ -33,19 +33,19 @@ class MiraBest_N(data.Dataset):
     base_folder = 'batches'
     url = "http://www.jb.man.ac.uk/research/MiraBest/MiraBest_N/MiraBest_N_batches.tar.gz" 
     filename = "MiraBest_N_batches.tar.gz"
-    tgz_md5 = '3ea385adfdc879eaeec0f77a766b5315'
+    tgz_md5 = '198337a1eb655a1f8642c590979d0e71'
     train_list = [
-                  ['data_batch_1', '07bb10e2b6d94803032018855de1141d'],
-                  ['data_batch_2', '1fd7393ad520ec302d54c187293ecb2b'],
-                  ['data_batch_3', '99e2919b2a19443d69455cb024571732'],
-                  ['data_batch_4', 'f9f4061353302ce097f522b12c9c9ee6'],
-                  ['data_batch_5', 'a87ec87f19ed0bbf0ec4ec8e924437a1'],
-                  ['data_batch_6', '45a93fa81381515c409e0011f95c7206'],
-                  ['data_batch_7', '573a46dc90e746e8e7cb2b219f091cf1'],
+                  ['data_batch_1', 'f6c591d62e166523403cd7cbdeb2b076'],
+                  ['data_batch_2', '35e3302aa61a8dbbf20db3ad06e21b17'],
+                  ['data_batch_3', '00d4725a4ba0f1cd6a298f9030673d3f'],
+                  ['data_batch_4', '29f9d1784521012d7c3893daebd84bca'],
+                  ['data_batch_5', 'cdfaafc3e6581f727f8fd13decc9b874'],
+                  ['data_batch_6', 'a50f185ef0fbc8d3bfa2f7f4004e78ca'],
+                  ['data_batch_7', '6d267af85775cc3f9d336dc11ecf6d7b'],
                   ]
 
     test_list = [
-                 ['test_batch', '7ec16472f4c9479afb54f6b3dc05c5bf'],
+                 ['test_batch', 'b3ff79c3b6c2acf9a0865f8b3d71a35d'],
                  ]
     meta = {
                 'filename': 'batches.meta',
