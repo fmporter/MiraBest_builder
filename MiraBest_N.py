@@ -13,7 +13,7 @@ import torch.utils.data as data
 from torchvision.datasets.utils import download_url, check_integrity
 
 
-class MiraBest_full(data.Dataset):
+class MiraBest_N(data.Dataset):
     """
     Inspired by `HTRU1 <https://as595.github.io/HTRU1/>`_ Dataset.
     Args:
