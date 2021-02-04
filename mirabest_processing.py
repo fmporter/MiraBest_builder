@@ -41,7 +41,7 @@ def crop_centre(img, cropx, cropy):
     ysize = np.shape(img)[1] # image height
     startx = xsize//2-(cropx//2)
     starty = ysize//2-(cropy//2)
-    img_slice = img[starty:starty+cropy,startx:startx+cropx]
+    img_slice = img[startx:startx+cropx,starty:starty+cropy]
     # This is a sub-optimal solution
     return img_slice
 
