@@ -1,0 +1,6 @@
+tmp
+venv
+.ipynb_checkpoints
+__pycache__
+data
+dev.ipynb

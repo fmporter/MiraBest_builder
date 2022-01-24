@@ -6,6 +6,7 @@ if sys.version_info[0] == 2:
 else:
     import pickle
 
+from sklearn.model_selection import train_test_split
 import torch.utils.data as data
 from torchvision.datasets.utils import download_url, check_integrity
 
@@ -27,6 +28,9 @@ class MiraBest_F(data.Dataset):
         download (bool, optional): If true, downloads the dataset from the internet and
             puts it in root directory. If dataset is already downloaded, it is not
             downloaded again.
+        test_size (float): Fraction of data to be stratified into a test set. i.e. 0.2
+            stratifies 20% of the MiraBest into a test set. Default (None) returns the 
+            standard MiraBest data set.
     """
 
     base_folder = 'F_batches'
@@ -55,7 +59,9 @@ class MiraBest_F(data.Dataset):
 
     def __init__(self, root, train=True,
                  transform=None, target_transform=None,
-                 download=False):
+                 download=False,
+                 test_size=None
+                ):
 
         self.root = os.path.expanduser(root)
         self.transform = transform
@@ -69,10 +75,12 @@ class MiraBest_F(data.Dataset):
             raise RuntimeError('Dataset not found or corrupted.' +
                                ' You can use download=True to download it')
 
-        if self.train:
+        if self.train and test_size is None:
             downloaded_list = self.train_list
-        else:
+        elif not self.train and test_size is None:
             downloaded_list = self.test_list
+        else:
+            downloaded_list = self.train_list + self.test_list
 
         self.data = []
         self.targets = []
@@ -99,6 +107,21 @@ class MiraBest_F(data.Dataset):
 
         self.data = np.vstack(self.data).reshape(-1, 1, 150, 150)
         self.data = self.data.transpose((0, 2, 3, 1))
+        
+        # Stratify entire data set according to input ratio (seeded)
+        if test_size is not None:
+            data_train, data_test, targets_train, targets_test = train_test_split(
+                self.data, self.targets, 
+                test_size = test_size, 
+                stratify  = self.targets,  # Targets to stratify according to
+                random_state = 42
+            )
+            if self.train:
+                self.data    = data_train
+                self.targets = targets_train
+            else:
+                self.data    = data_test
+                self.targets = targets_test
 
         self._load_meta()
 
