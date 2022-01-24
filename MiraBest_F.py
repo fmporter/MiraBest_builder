@@ -6,6 +6,7 @@ if sys.version_info[0] == 2:
 else:
     import pickle
 
+from sklearn.model_selection import train_test_split
 import torch.utils.data as data
 from torchvision.datasets.utils import download_url, check_integrity
 
@@ -27,10 +28,13 @@ class MiraBest_F(data.Dataset):
         download (bool, optional): If true, downloads the dataset from the internet and
             puts it in root directory. If dataset is already downloaded, it is not
             downloaded again.
+        test_size (float, optional): Fraction of data to be stratified into a test set. i.e. 0.2
+            stratifies 20% of the MiraBest into a test set. Default (None) returns the
+            standard MiraBest data set.
     """
 
     base_folder = 'F_batches'
-    url = "http://www.jb.man.ac.uk/research/MiraBest/MiraBest_F/MiraBest_F_batches.tar.gz" 
+    url = "http://www.jb.man.ac.uk/research/MiraBest/MiraBest_F/MiraBest_F_batches.tar.gz"
     filename = "MiraBest_F_batches.tar.gz"
     tgz_md5 = '7d4e3a623d29db7204bce81676ee8ce2'
     train_list = [
@@ -55,7 +59,9 @@ class MiraBest_F(data.Dataset):
 
     def __init__(self, root, train=True,
                  transform=None, target_transform=None,
-                 download=False):
+                 download=False,
+                 test_size=None
+                ):
 
         self.root = os.path.expanduser(root)
         self.transform = transform
@@ -69,10 +75,12 @@ class MiraBest_F(data.Dataset):
             raise RuntimeError('Dataset not found or corrupted.' +
                                ' You can use download=True to download it')
 
-        if self.train:
+        if self.train and test_size is None:
             downloaded_list = self.train_list
-        else:
+        elif not self.train and test_size is None:
             downloaded_list = self.test_list
+        else:
+            downloaded_list = self.train_list + self.test_list
 
         self.data = []
         self.targets = []
@@ -99,6 +107,21 @@ class MiraBest_F(data.Dataset):
 
         self.data = np.vstack(self.data).reshape(-1, 1, 150, 150)
         self.data = self.data.transpose((0, 2, 3, 1))
+
+        # Stratify entire data set according to input ratio (seeded)
+        if test_size is not None:
+            data_train, data_test, targets_train, targets_test = train_test_split(
+                self.data, self.targets,
+                test_size = test_size,
+                stratify  = self.targets,  # Targets to stratify according to
+                random_state = 42
+            )
+            if self.train:
+                self.data    = data_train
+                self.targets = targets_train
+            else:
+                self.data    = data_test
+                self.targets = targets_test
 
         self._load_meta()
 
@@ -177,19 +200,19 @@ class MiraBest_F(data.Dataset):
 # ---------------------------------------------------------------------------------
 
 class MBFRFull(MiraBest_F):
-    
+
     """
         Child class to load all FRI (0) & FRII (1)
         [100, 102, 104, 110, 112] and [200, 201, 210]
         """
-    
+
     def __init__(self, *args, **kwargs):
         super(MBFRFull, self).__init__(*args, **kwargs)
-        
+
         fr1_list = [0,1,2,3,4]
         fr2_list = [5,6,7]
         exclude_list = [8,9]
-        
+
         if exclude_list == []:
             return
         if self.train:
@@ -348,7 +371,7 @@ class MBHybrid(MiraBest_F):
             self.targets = targets[exclude_mask].tolist()
 
 # ---------------------------------------------------------------------------------
-    
+
 class MBRandom(MiraBest_F):
 
     """
@@ -357,10 +380,10 @@ class MBRandom(MiraBest_F):
 
     def __init__(self, certainty='all', morphologies='all', *args, **kwargs):
         super(MBRandom, self).__init__(*args, **kwargs)
-        
+
         # Checking flags
         # ------------------
-        
+
         if certainty == 'certain':
             certainty_list1 = np.array([0, 1, 2])
             certainty_list2 = np.array([5, 6])
@@ -369,23 +392,23 @@ class MBRandom(MiraBest_F):
             certainty_list2 = np.array([7])
         else:
             certainty_list1 = np.array([0, 1, 2, 3, 4])
-            certainty_list2 = np.array([5, 6, 7])   
-        
+            certainty_list2 = np.array([5, 6, 7])
+
         if morphologies == 'standard':
-            morphology_list1 = np.array([0, 3]) 
-            morphology_list2 = np.array([5, 7])   
+            morphology_list1 = np.array([0, 3])
+            morphology_list2 = np.array([5, 7])
         else:
-            morphology_list1 = np.array([0, 1, 2, 3, 4]) 
+            morphology_list1 = np.array([0, 1, 2, 3, 4])
             morphology_list2 = np.array([5, 6, 7])
-           
+
         list_matches1 = np.in1d(certainty_list1, morphology_list1)
         list_matches2 = np.in1d(certainty_list2, morphology_list2)
-        
+
         h1_list = certainty_list1[np.where(list_matches1)[0]]
         h2_list = certainty_list2[np.where(list_matches2)[0]]
-        
+
         # ------------------
-        
+
         if self.train:
             targets = np.array(self.targets)
             h1 = np.array(h1_list).reshape(1, -1)
@@ -418,4 +441,3 @@ class MBRandom(MiraBest_F):
             exclude_mask = (targets.reshape(-1, 1) == target_list).any(axis=1)
             self.data = self.data[exclude_mask]
             self.targets = targets[exclude_mask].tolist()
-                
